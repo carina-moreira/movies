@@ -1,0 +1,16 @@
+body {
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
+    "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: $white;
+  background-color: $black;
+}
+
+$font_size_1: 23px;
+$font_size_2: 20px;
+$font_size_3: 18px;
+$font_size_4: 16px;
+$font_size_5: 15px;
+$font_size_6: 14px;
