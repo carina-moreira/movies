@@ -1,6 +1,7 @@
 import React from "react";
 import fetchMovies from "./../../services/api.js";
 import { useState } from "react";
+import MovieCard from "../../components/MovieCard/MovieCard.jsx";
 
 const Movies = () => {
   const [movies, setMovies] = useState([]);
@@ -14,6 +15,7 @@ const Movies = () => {
 
   return (
     <div>
+      <MovieCard></MovieCard>
       <button onClick={showMovies}>Show Movies</button>
       <h1>Movies List</h1>
     </div>

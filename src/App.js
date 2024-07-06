@@ -5,8 +5,6 @@ import Movies from "./pages/Movies/Movies.jsx";
 function App() {
   return (
     <div className="app">
-      <h1>Inicial Structure</h1>
-
       <Router>
         <Routes>
           {Home && <Route path="/home" element={<Home />} />}

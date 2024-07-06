@@ -18,8 +18,6 @@ export const fetchMovies = async (term) => {
       throw new Error("Invalid API response");
     }
 
-    console.log("asdhjashds");
-    console.log(response.data.results);
     return response.data;
   } catch (error) {
     console.error("Error fetching movies:", error);
