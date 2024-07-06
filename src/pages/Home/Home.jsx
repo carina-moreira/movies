@@ -1,6 +1,6 @@
-import React from 'react';
+import React from "react";
 
-const Home: React.FC = () => {
+const Home = () => {
   return (
     <div>
       <h1>Welcome to Movie Search</h1>
