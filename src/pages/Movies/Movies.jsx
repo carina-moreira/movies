@@ -5,6 +5,7 @@ import { searchMovies } from "../../services/api.js";
 import MoviesList from "./../../components/MoviesList/MoviesList.jsx";
 import Navbar from "../../components/Navbar/Navbar.jsx";
 import Pagination from "../../components/Pagination/Pagination.jsx";
+import SortingSelectbox from "../../components/Sort/Sort.jsx";
 
 /**
  * Returns a new URLSearchParams object based on the current location search parameters.
@@ -20,9 +21,15 @@ const Movies = () => {
   const [term, setTerm] = useState([]);
   const [movies, setMovies] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [sortOrder, setSortOrder] = useState("asc");
   const moviesPerPage = 8;
   const navigate = useNavigate();
 
+  /**
+   * Retrieves movies based on the provided query.
+   *
+   * @return {Promise<void>} A promise that resolves when the movies are retrieved.
+   */
   useEffect(() => {
     const getMovies = async () => {
       if (query) {
@@ -34,6 +41,12 @@ const Movies = () => {
     getMovies();
   }, [query]);
 
+  /**
+   * A function that handles the submission of a search term.
+   *
+   * @param {string} term - The search term entered by the user.
+   * @return {void} Updates the state with search results and resets current page.
+   */
   const handleSearchSubmit = (term) => {
     setTerm(term);
     navigate(`/movies?query=${term}`); // to update the URL
@@ -41,6 +54,37 @@ const Movies = () => {
       setMovies(result.results);
       setCurrentPage(1); // Reset to first page on new search
     });
+  };
+
+  /**
+   * Sorts the movies array based on the provided order.
+   *
+   * @param {string} order - The order in which the movies should be sorted. Can be either "asc" for ascending order or any other value for descending order.
+   * @return {void} Updates the state of the movies array with the sorted movies.
+   */
+  const sortMovies = (order) => {
+    const sortedMovies = [...movies].sort((a, b) => {
+      const nameA = a.title.toUpperCase();
+      const nameB = b.title.toUpperCase();
+      if (order === "asc") {
+        return nameA < nameB ? -1 : nameA > nameB ? 1 : 0;
+      } else {
+        return nameA > nameB ? -1 : nameA < nameB ? 1 : 0;
+      }
+    });
+    setMovies(sortedMovies);
+  };
+
+  /**
+   * Updates the sort order and sorts the movies based on the new sort order.
+   *
+   * @param {Event} e - The event object triggered by the sort change.
+   * @return {void} This function does not return anything.
+   */
+  const handleSortChange = (e) => {
+    const newSortOrder = e.target.value;
+    setSortOrder(newSortOrder);
+    sortMovies(newSortOrder);
   };
 
   // Get current movies
@@ -76,7 +120,12 @@ const Movies = () => {
               </p>
             </div>
             {/* Sorting */}
-            <div className="movies__header__">SORT</div>
+            <div className="movies__header__sort">
+              <SortingSelectbox
+                sortOrder={sortOrder}
+                handleSortChange={handleSortChange}
+              />
+            </div>
           </div>
 
           {/* Movies list */}
