@@ -1,0 +1,47 @@
+@import "../../styles/styles.scss";
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  max-width: 240px;
+
+  &__img,
+  .noimage {
+    width: 100%;
+    max-height: 362px;
+    min-height: 362px;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 12px;
+  }
+
+  &__info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    &--title {
+      font-size: $font_size_3;
+      color: $white;
+      font-weight: 400;
+      margin-bottom: 8px;
+    }
+
+    &__detail {
+      font-size: $font_size_5;
+      color: $gray;
+      font-weight: 400;
+    }
+
+    &__rating {
+      margin-top: 18px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 6px;
+      width: fit-content;
+      background-color: rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+    }
+  }
+}
