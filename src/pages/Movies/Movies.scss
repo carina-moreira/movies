@@ -1,7 +1,9 @@
 @import "./../../styles/styles.scss";
 
 .movies {
-  padding: 20px;
+  .search__noresults {
+    margin-top: 60px;
+  }
 
   &__header {
     display: flex;

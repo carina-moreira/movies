@@ -10,7 +10,7 @@ import { searchMovies } from "./../../services/api.js";
  * @return {void} This function does not return anything.
  */
 const SearchBar = ({ onSearchSubmit }) => {
-  const [term, setTerm] = useState("");
+  const [term, setTerm] = useState(localStorage.getItem("searchTerm") || "");
   const [movies, setMovies] = useState([]);
   const [noResults, setNoResults] = useState(false);
   const navigate = useNavigate();
@@ -19,6 +19,9 @@ const SearchBar = ({ onSearchSubmit }) => {
   const handleSearch = async () => {
     const result = await searchMovies(term);
     setMovies(result.results);
+
+    // Save term to localStorage
+    localStorage.setItem("searchTerm", term);
 
     // To handle UI when there are no results
     result.results.length === 0 ? setNoResults(true) : setNoResults(false);
@@ -48,13 +51,12 @@ const SearchBar = ({ onSearchSubmit }) => {
           if (event.key === "Enter") handleSearch();
         }}
       />
-      {noResults === true &&
-        (location.pathname === "/" || location.pathname === "/home") && (
-          <div className="search__noresults">
-            <p>Sorry, no movies were found with this title.</p>
-            <p>Try again!</p>
-          </div>
-        )}
+      {noResults === true && location.pathname !== "/movies" && (
+        <div className="search__noresults">
+          <p>Sorry, no movies were found with this title.</p>
+          <p>Try again!</p>
+        </div>
+      )}
     </div>
   );
 };

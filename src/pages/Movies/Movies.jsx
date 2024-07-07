@@ -18,7 +18,7 @@ const useQuery = () => {
 
 const Movies = () => {
   const query = useQuery().get("query");
-  const [term, setTerm] = useState([]);
+  const [term, setTerm] = useState(localStorage.getItem("searchTerm") || "");
   const [movies, setMovies] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [sortOrder, setSortOrder] = useState("asc");
@@ -36,10 +36,14 @@ const Movies = () => {
         const result = await searchMovies(query);
         setMovies(result.results);
         setCurrentPage(1); // Reset to first page on new search
+      } else if (term) {
+        // If there's no query in the URL but there's a term in localStorage, search by the term
+        const result = await searchMovies(term);
+        setMovies(result.results);
       }
     };
     getMovies();
-  }, [query]);
+  }, [query, term]);
 
   /**
    * A function that handles the submission of a search term.
@@ -49,6 +53,8 @@ const Movies = () => {
    */
   const handleSearchSubmit = (term) => {
     setTerm(term);
+    localStorage.setItem("searchTerm", term);
+
     navigate(`/movies?query=${term}`); // to update the URL
     searchMovies(term).then((result) => {
       setMovies(result.results);
@@ -93,9 +99,11 @@ const Movies = () => {
   const currentMovies = movies.slice(indexOfFirstMovie, indexOfLastMovie);
 
   // Change page
-  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+  const paginate = (pageNumber) => {
+    setCurrentPage(pageNumber);
+    localStorage.setItem("currentPage", pageNumber); // Save current page to local storage
+  };
 
-  // TODO: Make search term persist on browser after page reload
   return (
     <div className="movies">
       <Navbar onSearchSubmit={handleSearchSubmit}></Navbar>
