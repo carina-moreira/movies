@@ -1,7 +1,7 @@
 import "./Movies.scss";
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { searchMovies } from "../../services/api.js";
+import { searchMovies, getMovieDetails } from "../../services/api.js";
 import MoviesList from "./../../components/MoviesList/MoviesList.jsx";
 import Navbar from "../../components/Navbar/Navbar.jsx";
 import Pagination from "../../components/Pagination/Pagination.jsx";
@@ -32,34 +32,48 @@ const Movies = () => {
    */
   useEffect(() => {
     const getMovies = async () => {
+      let result;
       if (query) {
-        const result = await searchMovies(query);
-        setMovies(result.results);
-        setCurrentPage(1); // Reset to first page on new search
+        result = await searchMovies(query);
       } else if (term) {
-        // If there's no query in the URL but there's a term in localStorage, search by the term
-        const result = await searchMovies(term);
-        setMovies(result.results);
+        result = await searchMovies(term);
+      } else {
+        return;
       }
+
+      const moviesWithDetails = await Promise.all(
+        result.results.map(async (movie) => {
+          const details = await getMovieDetails(movie.id);
+          return { ...movie, ...details };
+        })
+      );
+      setMovies(moviesWithDetails);
+      setCurrentPage(1); // Reset to first page on new search
     };
     getMovies();
   }, [query, term]);
 
   /**
-   * A function that handles the submission of a search term.
+   * Handles the submission of a search term.
    *
    * @param {string} term - The search term entered by the user.
-   * @return {void} Updates the state with search results and resets current page.
+   * @return {Promise<void>} A promise that resolves when the movies are retrieved and set.
    */
-  const handleSearchSubmit = (term) => {
+  const handleSearchSubmit = async (term) => {
     setTerm(term);
     localStorage.setItem("searchTerm", term);
 
     navigate(`/movies?query=${term}`); // to update the URL
-    searchMovies(term).then((result) => {
-      setMovies(result.results);
-      setCurrentPage(1); // Reset to first page on new search
-    });
+
+    const result = await searchMovies(term);
+    const moviesWithDetails = await Promise.all(
+      result.results.map(async (movie) => {
+        const details = await getMovieDetails(movie.id);
+        return { ...movie, ...details };
+      })
+    );
+    setMovies(moviesWithDetails);
+    setCurrentPage(1); // Reset to first page on new search
   };
 
   /**
