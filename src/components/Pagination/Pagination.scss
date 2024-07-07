@@ -1,0 +1,33 @@
+@import "./../../styles/styles.scss";
+
+.pagination {
+  margin-top: 60px;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+
+  &__number,
+  &__arrow--prev,
+  &__arrow--next {
+    min-width: 32px;
+    min-height: 32px;
+    background-color: transparent;
+    font-size: $font_size_6;
+    color: $white;
+    font-weight: 400;
+    border: 0;
+    cursor: pointer;
+    transition: all 0.8s ease;
+  }
+
+  .active {
+    color: $primary;
+  }
+
+  .arrow--left {
+    transform: rotate(90deg);
+  }
+  .arrow--right {
+    transform: rotate(-90deg);
+  }
+}
