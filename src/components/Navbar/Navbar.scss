@@ -1,0 +1,51 @@
+@import "././../../styles/styles.scss";
+
+@mixin fontStyle($color, $weight) {
+  color: $color;
+  font-weight: $weight;
+}
+
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+
+  &__brand {
+    display: flex;
+    gap: 13px;
+    font-size: $font_size_1;
+
+    &--concealed {
+      @include fontStyle($white, 600);
+    }
+
+    &--films {
+      @include fontStyle($primary, 400);
+    }
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: 26px;
+
+    .icon {
+      max-width: 24px;
+      max-height: 24px;
+      width: 100%;
+      height: auto;
+    }
+
+    &__profile {
+      display: flex;
+      gap: 8px;
+      &--img {
+        max-width: 32px;
+        max-height: 32px;
+        width: 100%;
+        height: auto;
+      }
+    }
+  }
+}
