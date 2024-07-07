@@ -1,28 +1,15 @@
 import axios from "axios";
 
 const API_KEY = "5d4a64b8ede398cf2077dd4a640374da";
-const API_URL = `https://api.themoviedb.org/3/search/movie?api_key=${API_KEY}`;
+const BASE_URL = "https://api.themoviedb.org/3";
 
-export const fetchMovies = async (term) => {
-  if (!term) {
-    throw new Error("Missing search term");
-  }
-
-  try {
-    const response = await axios.get(API_URL, {
-      headers: { Authorization: API_KEY },
-      params: { query: term },
-    });
-
-    if (!response || !response.data || !response.data.results) {
-      throw new Error("Invalid API response");
-    }
-
-    return response.data;
-  } catch (error) {
-    console.error("Error fetching movies:", error);
-    throw error;
-  }
+export const searchMovies = async (query, page = 1) => {
+  const response = await axios.get(`${BASE_URL}/search/movie`, {
+    params: {
+      api_key: API_KEY,
+      query,
+      page,
+    },
+  });
+  return response.data;
 };
-
-export default fetchMovies;
