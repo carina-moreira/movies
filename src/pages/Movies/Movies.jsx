@@ -1,23 +1,56 @@
-import React from "react";
-import fetchMovies from "./../../services/api.js";
-import { useState } from "react";
-import MovieCard from "../../components/MovieCard/MovieCard.jsx";
+import React, { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
+import { searchMovies } from "../../services/api.js";
+import MoviesList from "./../../components/MoviesList/MoviesList.jsx";
+import Navbar from "../../components/Navbar/Navbar.jsx";
+
+/**
+ * Returns a new URLSearchParams object based on the current location search parameters.
+ *
+ * @return {URLSearchParams} A new URLSearchParams object
+ */
+const useQuery = () => {
+  return new URLSearchParams(useLocation().search);
+};
 
 const Movies = () => {
+  const query = useQuery().get("query");
   const [movies, setMovies] = useState([]);
 
-  const showMovies = async (all) => {
-    const result = await fetchMovies(all);
-    setMovies(result);
+  /**
+   * Fetches movies based on the provided query and updates the state with the results.
+   */
+  useEffect(() => {
+    const getMovies = async () => {
+      if (query) {
+        const result = await searchMovies(query);
+        setMovies(result.results);
+      }
+    };
+    getMovies();
+  }, [query]);
 
-    console.log(setMovies);
+  /**
+   * Handles the search submission by fetching movies based on the provided term and updating the state with the results.
+   *
+   * @param {type} term - The search term to be used for fetching movies.
+   * @return {type} No return value.
+   */
+  const handleSearchSubmit = (term) => {
+    searchMovies(term).then((result) => setMovies(result.results));
   };
 
   return (
-    <div>
-      <MovieCard></MovieCard>
-      <button onClick={showMovies}>Show Movies</button>
-      <h1>Movies List</h1>
+    <div className="movies">
+      <Navbar onSearchSubmit={handleSearchSubmit}></Navbar>
+      {movies.length === 0 ? (
+        <div className="search__noresults">
+          <p>Sorry, no movies were found with this title.</p>
+          <p>Try again!</p>
+        </div>
+      ) : (
+        <MoviesList movies={movies} />
+      )}
     </div>
   );
 };
