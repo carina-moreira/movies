@@ -1,29 +1,60 @@
 import "./SearchBar.scss";
-import { useState } from "react";
+import React, { useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { searchMovies } from "./../../services/api.js";
+
 /**
- * Renders a search bar component that allows the user to search for movies by name.
+ * Function to handle searching for movies based on a search term,
+ * updating the UI based on search results, and navigating to the movies page if no results on the homepage.
  *
- * @param {function} onSubmit - A callback function that is called when the form is submitted. It receives the search term as a parameter.
- * @return {JSX.Element} The search bar component.
+ * @return {void} This function does not return anything.
  */
-const SearchBar = ({ onSubmit }) => {
+const SearchBar = ({ onSearchSubmit }) => {
   const [term, setTerm] = useState("");
+  const [movies, setMovies] = useState([]);
+  const [noResults, setNoResults] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  const handleFormSubmit = (event) => {
-    event.preventDefault();
-    onSubmit(term);
-  };
+  const handleSearch = async () => {
+    const result = await searchMovies(term);
+    setMovies(result.results);
 
-  const handleChange = (event) => {
-    setTerm(event.target.value);
+    // To handle UI when there are no results
+    result.results.length === 0 ? setNoResults(true) : setNoResults(false);
+
+    // If on homepage, navigate to movies page with search term
+    if (
+      noResults === true &&
+      (location.pathname === "/" || location.pathname === "/home")
+    ) {
+      navigate(`/movies?query=${term}`);
+    }
+
+    // If on movies page, call the onSearchSubmit callback
+    if (location.pathname === "/movies") {
+      onSearchSubmit(term);
+    }
   };
 
   return (
-    <div className="search-bar">
-      <h1>Search by movie name:</h1>
-      <form onSubmit={handleFormSubmit}>
-        <input value={term} onChange={handleChange} />
-      </form>
+    <div className="search">
+      <input
+        className="search__input"
+        type="text"
+        value={term}
+        onChange={(e) => setTerm(e.target.value)}
+        onKeyDown={(event) => {
+          if (event.key === "Enter") handleSearch();
+        }}
+      />
+      {noResults === true &&
+        (location.pathname === "/" || location.pathname === "/home") && (
+          <div className="search__noresults">
+            <p>Sorry, no movies were found with this title.</p>
+            <p>Try again!</p>
+          </div>
+        )}
     </div>
   );
 };
