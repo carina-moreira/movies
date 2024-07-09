@@ -71,31 +71,32 @@ const MovieCard = ({ movie }) => {
       {(title || release_date || genre || time) && (
         <div className="card__info">
           {title && <p className="card__info--title">{title}</p>}
+          <div className="card__info--wrapper">
+            {(release_date || genre || time) && (
+              <div className="card__info__detail">
+                {time !== 0 && (
+                  <span className="card__info__detail--time">
+                    {toHoursAndMinutes(time)}|
+                  </span>
+                )}
 
-          {(release_date || genre || time) && (
-            <div className="card__info__detail">
-              {time && (
-                <span className="card__info__detail--time">
-                  {toHoursAndMinutes(time)}|
-                </span>
-              )}
+                {genre && (
+                  <span className="card__info__detail--genre"> {genre} |</span>
+                )}
 
-              {genre && (
-                <span className="card__info__detail--genre"> {genre} |</span>
-              )}
+                {release_date && (
+                  <span className="card__info__detail--date">
+                    {" "}
+                    {formattedReleaseDate}
+                  </span>
+                )}
+              </div>
+            )}
 
-              {release_date && (
-                <span className="card__info__detail--date">
-                  {" "}
-                  {formattedReleaseDate}
-                </span>
-              )}
+            <div className="card__info__rating">
+              <span className="card__info__rating--val">{vote_average}/10</span>
+              <img className="card__info__rating--star" src={star} alt="star" />
             </div>
-          )}
-
-          <div className="card__info__rating">
-            <span className="card__info__rating--val">{vote_average}/10</span>
-            <img className="card__info__rating--star" src={star} alt="star" />
           </div>
         </div>
       )}

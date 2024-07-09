@@ -22,13 +22,20 @@
   &__info {
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    height: 100%;
 
     &--title {
       font-size: $font_size_3;
       color: $white;
       font-weight: 400;
       margin-bottom: 8px;
+    }
+
+    &--wrapper {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 100%;
     }
 
     &__detail {
