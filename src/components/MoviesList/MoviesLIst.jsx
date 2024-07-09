@@ -8,7 +8,9 @@ const MoviesList = ({ movies }) => {
 
   return (
     renderedMovies.length > 0 && (
-      <div className="movieslist">{renderedMovies}</div>
+      <div className="movieslist" id="movies-list">
+        {renderedMovies}
+      </div>
     )
   );
 };
