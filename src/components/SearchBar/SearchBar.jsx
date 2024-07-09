@@ -13,30 +13,38 @@ const SearchBar = ({ onSearchSubmit }) => {
   const [term, setTerm] = useState(localStorage.getItem("searchTerm") || "");
   const [movies, setMovies] = useState([]);
   const [noResults, setNoResults] = useState(false);
+  const [error, setError] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
   const handleSearch = async () => {
-    const result = await searchMovies(term);
-    setMovies(result.results);
+    try {
+      const result = await searchMovies(term);
+      setMovies(result.results);
 
-    // Save term to localStorage
-    localStorage.setItem("searchTerm", term);
+      // Save term to localStorage
+      localStorage.setItem("searchTerm", term);
 
-    // To handle UI when there are no results
-    result.results.length === 0 ? setNoResults(true) : setNoResults(false);
+      // To handle UI when there are no results
+      result.results.length === 0 ? setNoResults(true) : setNoResults(false);
 
-    // If on homepage, navigate to movies page with search term
-    if (
-      noResults === true &&
-      (location.pathname === "/" || location.pathname === "/home")
-    ) {
-      navigate(`/movies?query=${term}`);
-    }
+      // If on homepage, navigate to movies page with search term
+      if (
+        noResults === true &&
+        (location.pathname === "/" || location.pathname === "/home")
+      ) {
+        navigate(`/movies?query=${term}`);
+      }
 
-    // If on movies page, call the onSearchSubmit callback
-    if (location.pathname === "/movies") {
-      onSearchSubmit(term);
+      // If on movies page, call the onSearchSubmit callback
+      if (location.pathname === "/movies") {
+        onSearchSubmit(term);
+      }
+    } catch (error) {
+      console.error("Error searching movies:", error);
+      setError(
+        "Sorry, an error occurred while searching for movies. Please try again."
+      );
     }
   };
 
@@ -57,6 +65,7 @@ const SearchBar = ({ onSearchSubmit }) => {
           <p>Try again!</p>
         </div>
       )}
+      {error && <div className="error__message">{error}</div>}
     </div>
   );
 };

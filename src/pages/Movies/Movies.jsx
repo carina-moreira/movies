@@ -22,6 +22,7 @@ const Movies = () => {
   const [movies, setMovies] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [sortOrder, setSortOrder] = useState("asc");
+  const [error, setError] = useState("");
   const moviesPerPage = 8;
   const navigate = useNavigate();
 
@@ -32,23 +33,35 @@ const Movies = () => {
    */
   useEffect(() => {
     const getMovies = async () => {
-      let result;
-      if (query) {
-        result = await searchMovies(query);
-      } else if (term) {
-        result = await searchMovies(term);
-      } else {
-        return;
-      }
+      try {
+        let result;
+        if (query) {
+          result = await searchMovies(query);
+        } else if (term) {
+          result = await searchMovies(term);
+        } else {
+          return;
+        }
+        if (result.error) {
+          setError(result.error);
+          return;
+        }
 
-      const moviesWithDetails = await Promise.all(
-        result.results.map(async (movie) => {
-          const details = await getMovieDetails(movie.id);
-          return { ...movie, ...details };
-        })
-      );
-      setMovies(moviesWithDetails);
-      setCurrentPage(1); // Reset to first page on new search
+        const moviesWithDetails = await Promise.all(
+          result.results.map(async (movie) => {
+            const details = await getMovieDetails(movie.id);
+            if (details.error) return movie; // return the movie without details
+            return { ...movie, ...details };
+          })
+        );
+        setMovies(moviesWithDetails);
+        setCurrentPage(1); // Reset to first page on new search
+      } catch (error) {
+        console.error("Error fetching movies: " + error.message);
+        setError(
+          "Sorry, there was an error fetching movies. Please try again!"
+        );
+      }
     };
     getMovies();
   }, [query, term]);
@@ -64,16 +77,23 @@ const Movies = () => {
     localStorage.setItem("searchTerm", term);
 
     navigate(`/movies?query=${term}`); // to update the URL
-
-    const result = await searchMovies(term);
-    const moviesWithDetails = await Promise.all(
-      result.results.map(async (movie) => {
-        const details = await getMovieDetails(movie.id);
-        return { ...movie, ...details };
-      })
-    );
-    setMovies(moviesWithDetails);
-    setCurrentPage(1); // Reset to first page on new search
+    try {
+      const result = await searchMovies(term);
+      const moviesWithDetails = await Promise.all(
+        result.results.map(async (movie) => {
+          const details = await getMovieDetails(movie.id);
+          if (details.error) return movie; // return the movie without details
+          return { ...movie, ...details };
+        })
+      );
+      setMovies(moviesWithDetails);
+      setCurrentPage(1); // Reset to first page on new search
+    } catch {
+      console.error("Error fetching movies: " + error.message);
+      setError(
+        "Sorry, there was an error searching for movies. Please try again!"
+      );
+    }
   };
 
   /**
@@ -121,6 +141,13 @@ const Movies = () => {
   return (
     <div className="movies">
       <Navbar onSearchSubmit={handleSearchSubmit}></Navbar>
+
+      {/* Error message */}
+      {error && (
+        <div className="error__message">
+          <p>{error}</p>
+        </div>
+      )}
 
       {/* No results */}
       {movies.length === 0 ? (
