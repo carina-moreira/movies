@@ -21,10 +21,6 @@ const Pagination = ({ moviesPerPage, totalMovies, currentPage, paginate }) => {
 
   return (
     <div className="pagination">
-      {/* TODO:
-       * Implement scroll to the start of the movies list after clicking next/prev
-       * Disabled arrow style
-       * */}
       <button
         onClick={() => currentPage > 1 && paginate(currentPage - 1)}
         className={`pagination__arrow--prev ${

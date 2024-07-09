@@ -136,6 +136,9 @@ const Movies = () => {
   const paginate = (pageNumber) => {
     setCurrentPage(pageNumber);
     localStorage.setItem("currentPage", pageNumber); // Save current page to local storage
+    document
+      .getElementById("movies-list")
+      .scrollIntoView({ behavior: "smooth" });
   };
 
   return (
